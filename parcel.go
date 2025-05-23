@@ -74,34 +74,19 @@ func (s ParcelStore) SetStatus(number int, status string) error {
 }
 
 func (s ParcelStore) SetAddress(number int, address string) error {
-	parcel, err := s.Get(number)
-
+	_, err := s.db.Exec("UPDATE parcel SET address = $1 WHERE number = $2 and status = $3",
+		address, number, ParcelStatusRegistered)
 	if err != nil {
-		return nil
-	}
-
-	if parcel.Status == ParcelStatusRegistered {
-		_, err = s.db.Exec("UPDATE parcel SET address = $1 WHERE number = $2", address, number)
-		if err != nil {
-			return err
-		}
+		return err
 	}
 
 	return nil
 }
 
 func (s ParcelStore) Delete(number int) error {
-	parcel, err := s.Get(number)
-
+	_, err := s.db.Exec("Delete from parcel where number = $1 and status = $2", number, ParcelStatusRegistered)
 	if err != nil {
-		return nil
-	}
-
-	if parcel.Status == ParcelStatusRegistered {
-		_, err = s.db.Exec("Delete from parcel where number = $1", number)
-		if err != nil {
-			return err
-		}
+		return err
 	}
 
 	return nil
