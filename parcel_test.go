@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"log"
 	"math/rand"
 	"testing"
 	"time"
@@ -30,19 +29,16 @@ func getTestParcel() Parcel {
 	}
 }
 
-func connectToDb() *sql.DB {
+func connectToDb(t *testing.T) *sql.DB {
 	db, err := sql.Open("sqlite", "tracker.db")
-	if err != nil {
-		log.Printf(err.Error())
-		return db
-	}
+	require.NoError(t, err)
 	return db
 }
 
 // TestAddGetDelete проверяет добавление, получение и удаление посылки
 func TestAddGetDelete(t *testing.T) {
 	// prepare
-	db := connectToDb()
+	db := connectToDb(t)
 	defer db.Close()
 	store := NewParcelStore(db)
 	parcel := getTestParcel()
@@ -69,7 +65,7 @@ func TestAddGetDelete(t *testing.T) {
 // TestSetAddress проверяет обновление адреса
 func TestSetAddress(t *testing.T) {
 	// prepare
-	db := connectToDb()
+	db := connectToDb(t)
 	defer db.Close()
 
 	store := NewParcelStore(db)
@@ -94,7 +90,7 @@ func TestSetAddress(t *testing.T) {
 // TestSetStatus проверяет обновление статуса
 func TestSetStatus(t *testing.T) {
 	// prepare
-	db := connectToDb()
+	db := connectToDb(t)
 	defer db.Close()
 
 	store := NewParcelStore(db)
@@ -119,7 +115,7 @@ func TestSetStatus(t *testing.T) {
 // TestGetByClient проверяет получение посылок по идентификатору клиента
 func TestGetByClient(t *testing.T) {
 	// prepare
-	db := connectToDb()
+	db := connectToDb(t)
 	defer db.Close()
 
 	store := NewParcelStore(db)
